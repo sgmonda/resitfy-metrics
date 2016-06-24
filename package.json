@@ -1,0 +1,25 @@
+{
+  "name": "restify-metrics",
+  "version": "0.0.1",
+  "description": "Restify layer for monitoring API performance",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgmonda/resitfy-metrics.git"
+  },
+  "keywords": [
+    "restify",
+    "monitor",
+    "performance",
+    "metrics"
+  ],
+  "author": "Sergio Garcia Mondaray <sgmonda@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sgmonda/resitfy-metrics/issues"
+  },
+  "homepage": "https://github.com/sgmonda/resitfy-metrics#readme"
+}
