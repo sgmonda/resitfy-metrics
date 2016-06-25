@@ -27,4 +27,5 @@ storage.timeline('2016-06-24', '2016-06-26', 'response_code', (error, data) => {
 module.exports = {
   init,
   print: storage.print,
+  remove: storage.remove,
 };
