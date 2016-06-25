@@ -4,7 +4,7 @@
   "description": "Restify layer for monitoring API performance",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/sgmonda/resitfy-metrics/issues"
   },
-  "homepage": "https://github.com/sgmonda/resitfy-metrics#readme"
+  "homepage": "https://github.com/sgmonda/resitfy-metrics#readme",
+  "devDependencies": {
+    "restify": "*"
+  },
+  "dependencies": {
+    "moment": "^2.13.0",
+    "useragent": "2.1.9"
+  }
 }
