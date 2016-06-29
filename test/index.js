@@ -8,8 +8,15 @@ const PORT = 8081;
 var server = restify.createServer({
   name: 'Example',
 });
+var database = {
+  host: 'localhost',
+  port: 27017,
+  database: 'test',
+  user: 'test',
+  password: 'test',
+};
 
-metrics.init(server);
+metrics.init(server, database);
 
 let handler = (request, response) => {
 	setTimeout(() => {
@@ -24,6 +31,8 @@ server.listen(PORT);
 console.log(`Server listening on ${PORT}`);
 
 process.on('SIGINT', () => {
-  metrics.print();
-  process.exit(1);
+  metrics.timeline('2016-06-29', '2016-07-01', 'minute', 'os', (error, data) => {
+    console.log(error, data);
+    process.exit(1);
+  });
 });
