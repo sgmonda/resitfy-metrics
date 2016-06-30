@@ -16,7 +16,7 @@ var database = {
   password: 'test',
 };
 
-metrics.init(server, database);
+metrics.init(server, database, {debug: true});
 
 let handler = (request, response) => {
 	setTimeout(() => {
@@ -31,7 +31,7 @@ server.listen(PORT);
 console.log(`Server listening on ${PORT}`);
 
 process.on('SIGINT', () => {
-  metrics.timeline('2016-06-29', '2016-07-01', 'minute', 'os', (error, data) => {
+  metrics.timeline('2016-06-29', '2016-07-01', 'minute', 'route', (error, data) => {
     console.log(error, data);
     process.exit(1);
   });

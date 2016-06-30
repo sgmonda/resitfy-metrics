@@ -8,8 +8,8 @@ const onRequestFinished = (metadata) => {
   storage.add(metadata);
 };
 
-function init (server, database) {
-  storage.init(database);
+function init (server, database, options) {
+  storage.init(database, options);
   server.use(preamble);
   server.use(finisher(onRequestFinished));
 }
