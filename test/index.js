@@ -29,10 +29,3 @@ server.post(/.*/, handler);
 
 server.listen(PORT);
 console.log(`Server listening on ${PORT}`);
-
-process.on('SIGINT', () => {
-  metrics.timeline('2016-06-29', '2016-07-01', 'minute', 'route', (error, data) => {
-    console.log(error, data);
-    process.exit(1);
-  });
-});
