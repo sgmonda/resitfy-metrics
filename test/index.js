@@ -1,9 +1,9 @@
 'use strict';
 
-const restify = require('restify');
-const metrics = require('../index.js');
+var restify = require('restify');
+var metrics = require('../index.js');
 
-const PORT = 8081;
+var PORT = 8081;
 
 var server = restify.createServer({
   name: 'Example',
@@ -16,11 +16,11 @@ var database = {
   password: 'test',
 };
 
-metrics.init(server, database, {debug: true});
+metrics.init(server, database, {debug: true, endpoint: 'example'});
 
-let handler = (request, response) => {
-	setTimeout(() => {
-		response.send(503);
+var handler = function (request, response) {
+	setTimeout(function() {
+		response.send(200, 'hello');
 	}, Math.random() * 3 * 1000);
 };
 
@@ -28,4 +28,4 @@ server.get('/hello/:id/world', handler);
 server.post(/.*/, handler);
 
 server.listen(PORT);
-console.log(`Server listening on ${PORT}`);
+console.log('Server listening on', PORT);
