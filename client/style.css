@@ -1,3 +1,46 @@
 body {
-  background: red;
+  margin: 0;
+  padding: 1em;
+  font-family: monospace;
+  background: rgb(29, 29, 29);
+  color: #ddd;
+  overflow: hidden;
+}
+
+section {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: row;
+  -webkit-flex-direction: row;
+}
+  section > div {
+    margin: 0.5em;
+    padding: 1em;
+    flex: 1 1 auto;
+    -webkit-flex: 1 1 auto;
+    transition: width 0.7s ease-out;
+    -webkit-transition: width 0.7s ease-out;
+    border: solid 0.2em #2f2f2f;
+  }
+  section > div.counter {
+    background: #2f2f2f;
+  }
+  section > div.counter > div:first-child {
+    font-size: 2em;
+    margin-bottom: 0.2em;
+  }
+  section > div.counter > div:nth-child(2) {
+    color: #999;
+  }
+
+#ooss {
+  display: block;
+  margin: auto;
+}
+#ooss > div:first-child > div:first-child {
+  margin: auto;
+  display: block;
+
 }
