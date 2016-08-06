@@ -31,7 +31,7 @@ var COLORS_SCHEME = [
 	'#FF7043',
 	'#EC407A',
 ];
-var UPDATE_DELAY_MS = 1000 * 10;
+var UPDATE_DELAY_MS = 1000 * 1;
 
 function update () {
 	console.log('updating...');
