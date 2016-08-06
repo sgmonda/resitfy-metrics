@@ -1,25 +1,26 @@
-var chartOOSS = null;
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(function () {
-  chartOOSS = new google.visualization.PieChart(document.getElementById('ooss'));
-  setInterval(update, UPDATE_DELAY_MS);
-});
+Chart.defaults.global.defaultFontColor = '#ddd';
 
-var PIE_OPTIONS = {
-  legend: 'none',
-  pieSliceText: 'label',
-  pieStartAngle: 100,
-  width: '100%',
-  height: '100%',
-  backgroundColor: {
-    fill:'transparent'
-  },
-  chartArea: {
-    width: 300,
-    height: 300,
-  },
-  colors: COLORS_SCHEME,
-};
+var chart_timeline = new Chart(document.getElementById('timeline'), {
+  type: 'line',
+  data: {datasets: [{data: []}]},
+  options: {
+    scales: {
+      xAxes: [{
+        type: 'time',
+        display: true,
+        time: {
+          format: 'YYYY-MM-DD HH:mm',
+          tooltipFormat: 'll HH:mm'
+        }
+      }]
+    }
+  }
+});
+var chart_ooss = new Chart(document.getElementById('ooss'), {
+  type: 'pie',
+  data: {labels: [], datasets: [{data: []}]},
+  options: {}
+});
 
 var COLORS_SCHEME = [
   '#42A5F5',
@@ -30,29 +31,66 @@ var COLORS_SCHEME = [
   '#FF7043',
   '#EC407A',
 ];
-var UPDATE_DELAY_MS = 1000 * 1;
+var UPDATE_DELAY_MS = 1000 * 10;
 
 function update () {
   console.log('updating...');
   ooss();
+  timeline();
+  // TODO Add more here
 }
+update();
+setInterval(update, UPDATE_DELAY_MS);
 
 function ooss () {
   request('drilldown/os', function (data) {
-    var parsed = [['Label', 'Value']];
+    var labels = [], values = [];
     for (var key in data) {
-      parsed.push([key, data[key]]);
+      labels.push(key);
+      values.push(data[key]);
     }
-    data = google.visualization.arrayToDataTable(parsed);
-    chartOOSS.draw(data, PIE_OPTIONS);
+    chart_ooss.data.labels = labels;
+    chart_ooss.data.datasets[0].data = values;
+    chart_ooss.data.datasets[0].backgroundColor = COLORS_SCHEME;
+    chart_ooss.update();
+  });
+}
+
+function timeline () {
+  request('timeline/method', function (data) {
+    var datasets = {};
+    for (let ts in data) {
+      for (let key in data[ts]) {
+        datasets[key] = datasets[key] || {};
+        datasets[key][ts] = data[ts][key];
+      }
+    }
+    chart_timeline.data.datasets = [];
+    let index = 0;
+    for (let key in datasets) {
+      let data = [];
+      for (let ts in datasets[key]) {
+        data.push({x: moment(ts).format('YYYY-MM-DD HH:mm'), y: datasets[key][ts]});
+      }
+      data = data.sort(function (a, b) {
+        if (a.x < b.x) return -1;
+        if (a.x > b.x) return 1;
+        return 0;
+      });
+      chart_timeline.data.datasets.push({
+        label: key,
+        borderColor: COLORS_SCHEME[index++],
+        data: data,
+      });
+    }
+    chart_timeline.update(0);
   });
 }
 
 function request (url, callback) {
-  var from = moment().utc().subtract(1, 'day').format('YYYY-MM-DD');
+  var from = moment().utc().subtract(1, 'hour').format('YYYY-MM-DD');
   var to = moment().utc().add(1, 'day').format('YYYY-MM-DD');
   $.get('/{{ endpoint }}/' + url + '?from=' + from, function (data) {
-    console.log('RESULT', data);
     return callback(data);
   });
 }

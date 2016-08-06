@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title>Performance Board</title>
     <link href="/{{ endpoint }}/style.css" rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.8/chartist.min.css" rel="stylesheet"/>
   </head>
   <body>
     <section>
@@ -26,13 +25,13 @@
       </div>
     </section>
     <section>
-      <div id="main-chart">
-        hola
+      <div>
+        <canvas id="timeline"></canvas>
       </div>
     </section>
     <section>
       <div>
-        <div id="ooss"></div>
+        <canvas id="ooss"></canvas>
       </div>
       <div>
         bla
@@ -46,7 +45,8 @@
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.js"></script>
     <script src="/{{ endpoint }}/main.js"></script>
   </body>
 </html>

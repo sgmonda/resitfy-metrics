@@ -34,13 +34,3 @@ section {
   section > div.counter > div:nth-child(2) {
     color: #999;
   }
-
-#ooss {
-  display: block;
-  margin: auto;
-}
-#ooss > div:first-child > div:first-child {
-  margin: auto;
-  display: block;
-
-}
