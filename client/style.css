@@ -4,7 +4,6 @@ body {
   font-family: monospace;
   background: rgb(29, 29, 29);
   color: #ddd;
-  overflow: hidden;
 }
 
 section {

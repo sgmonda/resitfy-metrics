@@ -1,3 +1,5 @@
+/*global Chart, moment*/
+
 Chart.defaults.global.defaultFontColor = '#ddd';
 
 var chart_timeline = new Chart(document.getElementById('timeline'), {
@@ -10,16 +12,43 @@ var chart_timeline = new Chart(document.getElementById('timeline'), {
 				display: true,
 				time: {
 					format: 'YYYY-MM-DD HH:mm',
-					tooltipFormat: 'll HH:mm'
-				}
-			}]
-		}
-	}
+					tooltipFormat: 'll HH:mm',
+				},
+			}],
+			yAxes: [{
+				id: 'right',
+				position: 'right',
+				display: true,
+				ticks: {
+					callback: (num) => {
+						let units = {min: 60 * 1000, s: 1000};
+						for (let key in units) {
+							if (num >= units[key]) return (num / units[key]).toFixed(2) + ' ' + key;
+						}
+						return num.toFixed(2) + ' ms';
+					},
+				},
+			}, {
+				id: 'left',
+				position: 'left',
+				display: true,
+				ticks: {
+					callback: (num) => {
+						let units = {'KB': 1024, 'MB': 1024 * 1024};
+						for (let key in units) {
+							if (num >= units[key]) return parseInt(num / units[key]) + ' ' + key;
+						}
+						return num + ' B';
+					},
+				},
+			}],
+		},
+	},
 });
 var chart_ooss = new Chart(document.getElementById('ooss'), {
 	type: 'pie',
 	data: {labels: [], datasets: [{data: []}]},
-	options: {}
+	options: {},
 });
 
 var COLORS_SCHEME = [
@@ -31,7 +60,7 @@ var COLORS_SCHEME = [
 	'#FF7043',
 	'#EC407A',
 ];
-var UPDATE_DELAY_MS = 1000 * 1;
+var UPDATE_DELAY_MS = 1000 * 10;
 
 function update () {
 	console.log('updating...');
@@ -48,7 +77,6 @@ function summary () {
 		for (let key in data) {
 			$('#' + key).html(data[key]);
 		}
-		console.log('SUMMARY', data);
 	});
 }
 
@@ -67,20 +95,27 @@ function ooss () {
 }
 
 function timeline () {
-	request('timeline/method', function (data) {
+	request('timeline/duration,response_length?metrics=avg', function (raw) {
 		var datasets = {};
-		for (let ts in data) {
-			for (let key in data[ts]) {
-				datasets[key] = datasets[key] || {};
-				datasets[key][ts] = data[ts][key];
+		chart_timeline.data.datasets = [];
+		for (let variable in raw) {
+			let data = raw[variable];
+			for (let ts in data) {
+				for (let key in data[ts]) {
+					datasets[variable + '_' + key] = datasets[variable + '_' + key] || {};
+					datasets[variable + '_' + key][ts] = data[ts][key];
+				}
 			}
 		}
-		chart_timeline.data.datasets = [];
 		let index = 0;
 		for (let key in datasets) {
+			let yAxisID = key.indexOf('duration') === 0 ? 'right' : 'left';
 			let data = [];
 			for (let ts in datasets[key]) {
-				data.push({x: moment(ts).format('YYYY-MM-DD HH:mm'), y: datasets[key][ts]});
+				data.push({
+					x: moment(ts).format('YYYY-MM-DD HH:mm'),
+					y: datasets[key][ts].toFixed(2).replace('.00', ''),
+				});
 			}
 			data = data.sort(function (a, b) {
 				if (a.x < b.x) return -1;
@@ -88,9 +123,10 @@ function timeline () {
 				return 0;
 			});
 			chart_timeline.data.datasets.push({
-				label: key,
-				borderColor: COLORS_SCHEME[index++],
+				label: key.replace(/_/g, ' ').replace(/\s[^\s]+$/, ''),
+				borderColor: COLORS_SCHEME[index++ % COLORS_SCHEME.length],
 				data: data,
+				yAxisID: yAxisID,
 			});
 		}
 		chart_timeline.update(0);
@@ -100,7 +136,9 @@ function timeline () {
 function request (url, callback) {
 	var from = moment().utc().subtract(1, 'hour').format('YYYY-MM-DD');
 	var to = moment().utc().format('YYYY-MM-DD');
-	$.get('/{{ endpoint }}/' + url + '?from=' + from, function (data) {
+	let joinSymbol = '?';
+	if (url.indexOf('?') !== -1) joinSymbol = '&';
+	$.get('/{{ endpoint }}/' + url + joinSymbol + 'from=' + from, function (data) {
 		return callback(data);
 	});
 }
