@@ -1,1 +1,1 @@
-module.exports = require('./lib/perboard');
+module.exports = require('./dist/perboard');
