@@ -9,7 +9,7 @@ var server = restify.createServer({
   name: 'Example',
 });
 var database = {
-  host: 'localhost',
+  host: '192.168.99.100',
   port: 27017,
   database: 'test',
   user: 'test',
@@ -26,6 +26,7 @@ var handler = function (request, response) {
 
 server.get('/hello/:id/world', handler);
 server.post(/.*/, handler);
+server.put(/.*/, handler);
 
 server.listen(PORT);
 console.log('Server listening on', PORT);

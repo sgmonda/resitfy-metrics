@@ -1,6 +1,10 @@
 /*global Chart, moment*/
 
 Chart.defaults.global.defaultFontColor = '#ddd';
+Chart.defaults.global.animation = {
+	duration: 1000,
+	easing: 'linear',
+};
 
 var chart_timeline = new Chart(document.getElementById('timeline'), {
 	type: 'line',
@@ -13,6 +17,9 @@ var chart_timeline = new Chart(document.getElementById('timeline'), {
 				time: {
 					format: 'YYYY-MM-DD HH:mm',
 					tooltipFormat: 'll HH:mm',
+				},
+				gridLines: {
+					color: 'rgba(255, 255, 255, 0.1)',
 				},
 			}],
 			yAxes: [{
@@ -28,6 +35,9 @@ var chart_timeline = new Chart(document.getElementById('timeline'), {
 						return num.toFixed(2) + ' ms';
 					},
 				},
+				gridLines: {
+					color: 'rgba(255, 255, 255, 0.1)',
+				},
 			}, {
 				id: 'left',
 				position: 'left',
@@ -41,11 +51,29 @@ var chart_timeline = new Chart(document.getElementById('timeline'), {
 						return num + ' B';
 					},
 				},
+				gridLines: {
+					color: 'rgba(255, 255, 255, 0.1)',
+				},
 			}],
 		},
 	},
 });
 var chart_ooss = new Chart(document.getElementById('ooss'), {
+	type: 'pie',
+	data: {labels: [], datasets: [{data: []}]},
+	options: {},
+});
+var chart_hostname = new Chart(document.getElementById('hostname'), {
+	type: 'pie',
+	data: {labels: [], datasets: [{data: []}]},
+	options: {},
+});
+var chart_method = new Chart(document.getElementById('method'), {
+	type: 'pie',
+	data: {labels: [], datasets: [{data: []}]},
+	options: {},
+});
+var chart_route = new Chart(document.getElementById('route'), {
 	type: 'pie',
 	data: {labels: [], datasets: [{data: []}]},
 	options: {},
@@ -60,12 +88,15 @@ var COLORS_SCHEME = [
 	'#FF7043',
 	'#EC407A',
 ];
-var UPDATE_DELAY_MS = 1000 * 10;
+var UPDATE_DELAY_MS = 1000 * 1;
 
 function update () {
 	console.log('updating...');
 	summary();
 	ooss();
+	hostname();
+	method();
+	route();
 	timeline();
 	// TODO Add more here
 }
@@ -91,6 +122,48 @@ function ooss () {
 		chart_ooss.data.datasets[0].data = values;
 		chart_ooss.data.datasets[0].backgroundColor = COLORS_SCHEME;
 		chart_ooss.update();
+	});
+}
+
+function method () {
+	request('drilldown/method', function (data) {
+		var labels = [], values = [];
+		for (var key in data) {
+			labels.push(key);
+			values.push(data[key]);
+		}
+		chart_method.data.labels = labels;
+		chart_method.data.datasets[0].data = values;
+		chart_method.data.datasets[0].backgroundColor = COLORS_SCHEME;
+		chart_method.update();
+	});
+}
+
+function route () {
+	request('drilldown/route', function (data) {
+		var labels = [], values = [];
+		for (var key in data) {
+			labels.push(key);
+			values.push(data[key]);
+		}
+		chart_route.data.labels = labels;
+		chart_route.data.datasets[0].data = values;
+		chart_route.data.datasets[0].backgroundColor = COLORS_SCHEME;
+		chart_route.update();
+	});
+}
+
+function hostname () {
+	request('drilldown/hostname', function (data) {
+		var labels = [], values = [];
+		for (var key in data) {
+			labels.push(key);
+			values.push(data[key]);
+		}
+		chart_hostname.data.labels = labels;
+		chart_hostname.data.datasets[0].data = values;
+		chart_hostname.data.datasets[0].backgroundColor = COLORS_SCHEME;
+		chart_hostname.update();
 	});
 }
 
